@@ -63,8 +63,6 @@ export class SignupComponent implements OnInit{
     }
   }
 
-
-
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
   }
@@ -84,7 +82,7 @@ export class SignupComponent implements OnInit{
   getPasswordErrors() : string[] {
     const errorList : string[] = [] ;
     const passwordControl = this.signupForm.controls['password'];
-    if (passwordControl.touched) {
+    if ( passwordControl && passwordControl.touched) {
       const errors = passwordControl.errors ?? {};
       const errorsKeys = Object.keys(errors);
       errorsKeys.forEach(error => {
