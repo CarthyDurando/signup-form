@@ -1,1 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-signup {
+    background: linear-gradient(
+      180deg,
+      #4b5e65 41.21%,
+      #4b5e65 83.79%,
+      #201b22 100%
+    ) !important;
+  }

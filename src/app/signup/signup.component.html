@@ -1,0 +1,136 @@
+<div class="container-login">
+    <div
+      class="w-full lg:w-[560px] mx-auto max-w-sm sm:max-w-md md:max-w-lg lg:max-w-2xl">
+      <div class="flex items-center px-8 mt-10">
+        <div class="flex-grow h-0.5 bg-custom-color"></div>
+        <div
+          class="mx-4 flex justify-center items-center h-20 w-20 sm:h-32 sm:w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 rounded-full border-2 border-solid">
+          <img
+            src="/assets/img/logo-user.png"
+            class="w-12 h-12 sm:w-auto sm:h-auto" />
+        </div>
+        <div class="flex-grow h-0.5 bg-custom-color"></div>
+      </div>
+      <form class="bg-white rounded px-8 pt-6 pb-8" [formGroup]="signupForm">
+        <div class="flex flex-col sm:flex-row">
+          <div class="relative mb-4 sm:mr-2">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <!-- User Icon -->
+                <i class="fa fa-user"></i>
+              </span>
+              <input
+                type="text"
+                placeholder="First name "
+                formControlName="firstName"
+                [(ngModel)]="firstName"
+                class="w-full pl-10 pr-4 py-2 rounded border border-gray-400 focus:border-blue-500 focus:outline-none focus:shadow-outline" />
+            </div>
+            <small>
+                @if(this.getFieldError('firstName')) {
+                    Firstname is required
+                }
+            </small>
+          </div>
+          <div class="relative mb-4">
+            <div class="relative">
+              <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+                <!-- User Icon -->
+                <i class="fa fa-user"></i>
+              </span>
+              <input
+                type="text"
+                placeholder="Last name"
+                formControlName="lastName"
+                [(ngModel)]="lastName"
+                class="w-full pl-10 pr-4 py-2 rounded border border-gray-400 focus:border-blue-500 focus:outline-none focus:shadow-outline" />
+            </div>
+            <small>
+                @if(this.getFieldError('lastName')) {
+                    Lastname is required
+                }
+            </small>
+          </div>
+        </div>
+        <div class="mb-4">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <!-- User Icon -->
+              <i class="fa fa-envelope"></i>
+            </span>
+            <input
+              type="email"
+              placeholder="email"
+              formControlName="email"
+              class="w-full pl-10 pr-4 py-2 rounded border border-gray-400 focus:border-blue-500 focus:outline-none focus:shadow-outline" />
+          </div>
+          <small></small>
+        </div>
+        <div class="mb-4">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <!-- Password Icon -->
+              <i class="fa fa-lock"></i>
+            </span>
+            <input
+              id="password"
+              type="password"
+              placeholder="password"
+              formControlName="password"
+              [type]="showPassword ? 'text' : 'password'"
+              class="w-full pl-10 pr-4 py-2 rounded border border-gray-400 focus:border-blue-500 focus:outline-none focus:shadow-outline" />
+            <span
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              (click)="togglePasswordVisibility()">
+              @if(showPassword) {
+                <i class="fa fa-eye cursor-pointer"></i>
+                }@else {
+                <i class="fa fa-eye-slash cursor-pointer"></i>
+                }
+            </span>
+          </div>
+            @for (error of getPasswordErrors(); track error) {
+                <small>
+                    {{ error }}
+                </small><br>
+            }
+        </div>
+        <div class="mb-10">
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center">
+              <!-- Password Icon -->
+              <i class="fa fa-lock"></i>
+            </span>
+            <input
+              (keyup.enter)="onSubmit()"
+              id="passwordConfirm"
+              type="password"
+              placeholder="confirm password"
+              formControlName="passwordConfirm"
+              [type]="showPasswordConfirm ? 'text' : 'password'"
+              class="w-full pl-10 pr-4 py-2 rounded border border-gray-400 focus:border-blue-500 focus:outline-none focus:shadow-outline" />
+            <span
+              class="absolute inset-y-0 right-0 pr-3 flex items-center"
+              (click)="togglePasswordConfirmVisibility()">
+              @if(showPasswordConfirm) {
+              <i class="fa fa-eye cursor-pointer"></i>
+              }@else {
+              <i class="fa fa-eye-slash cursor-pointer"></i>
+              }
+            </span>
+          </div>
+          <small>{{ passwordMatch() }}</small>
+        </div>
+        <div class="flex items-center justify-between w-full mb-8">
+          <button
+            (click)="onSubmit()"
+            class="btn-sign text-button bg-custom-color txt-btn font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+            type="button">
+                Sign up
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <hr class="lg:w-[88%] md:w-[88%] mx-auto mt-7 w-80" />
+  
