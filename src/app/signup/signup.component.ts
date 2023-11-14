@@ -21,8 +21,6 @@ export class SignupComponent implements OnInit{
   thumbnailUrl!: string;
   showPassword: boolean = false;
   showPasswordConfirm: boolean = false;
-  firstName : string = '' ;
-  lastName : string = '';
 
   constructor(private fb: FormBuilder, private authService : AuthServiceService ) { }
 
@@ -47,14 +45,20 @@ export class SignupComponent implements OnInit{
     if (this.signupForm.valid) {
       // Make the first request to get the thumbnail url
       this.authService.runFirstRequest(this.signupForm.value.lastName.length ?? 0).subscribe((response : Album) => {
-        this.authService.runSecondRequest({
-          firstName: this.signupForm.value.firstName,
-          lastName: this.signupForm.value.lastName,
-          email: this.signupForm.value.email,
-          thumbnailUrl: this.thumbnailUrl
-        }).subscribe((response: any) => {
-          console.log('response ==== ' , response);
-        });
+
+        if (response) {
+          this.thumbnailUrl = response.thumbnailUrl
+
+          this.authService.runSecondRequest({
+            firstName: this.signupForm.value.firstName,
+            lastName: this.signupForm.value.lastName,
+            email: this.signupForm.value.email,
+            thumbnailUrl: this.thumbnailUrl
+          }).subscribe((response: any) => {
+            console.log('response ==== ' , response);
+          });
+        } 
+
       });
     }
   }
