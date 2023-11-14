@@ -43,24 +43,29 @@ export class SignupComponent implements OnInit{
 
   onSubmit(): void {
     if (this.signupForm.valid) {
-      // Make the first request to get the thumbnail url
-      this.authService.runFirstRequest(this.signupForm.value.lastName.length ?? 0).subscribe((response : Album) => {
-
-        if (response) {
-          this.thumbnailUrl = response.thumbnailUrl
-
-          this.authService.runSecondRequest({
-            firstName: this.signupForm.value.firstName,
-            lastName: this.signupForm.value.lastName,
-            email: this.signupForm.value.email,
-            thumbnailUrl: this.thumbnailUrl
-          }).subscribe((response: any) => {
-            console.log('response ==== ' , response);
-          });
-        } 
-
-      });
+      this.runFirstRequest();
     }
+  }
+  
+  private runFirstRequest(): void {
+    this.authService.runFirstRequest(this.signupForm.value.lastName.length ?? 0).subscribe((firstRequestResponse: Album) => {
+      if (firstRequestResponse) {
+        this.thumbnailUrl = firstRequestResponse.thumbnailUrl;
+        this.runSecondRequest();
+      }
+    });
+  }
+  
+  private runSecondRequest(): void {
+    const userData = {
+      firstName: this.signupForm.value.firstName,
+      lastName: this.signupForm.value.lastName,
+      email: this.signupForm.value.email,
+      thumbnailUrl: this.thumbnailUrl
+    };
+    this.authService.runSecondRequest(userData).subscribe((secondRequestResponse: any) => {
+      console.log('Second Request Response:', secondRequestResponse);
+    });
   }
 
   togglePasswordVisibility(): void {
