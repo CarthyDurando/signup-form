@@ -40,7 +40,7 @@ export class SignupComponent implements OnInit{
     if (this.signupForm.valid) {
       // Make the first request to get the thumbnail url
       this.http.get(`https://jsonplaceholder.typicode.com/photos/${this.signupForm.value.lastName.length}`).subscribe((response: any) => {
-        this.thumbnailUrl = response[0].thumbnailUrl;
+        this.thumbnailUrl = response.thumbnailUrl;
         // Make the second request to create the user
           this.http.post('https://jsonplaceholder.typicode.com/users', {
             firstName: this.signupForm.value.firstName,
@@ -68,7 +68,6 @@ export class SignupComponent implements OnInit{
   }
 
   getFieldError(fieldName : string): boolean | undefined {
-    console.log('this.signupForm ==== ' , this.signupForm);
     return this.signupForm.get(fieldName)?.touched && this.signupForm.get(fieldName)?.invalid
   }
 
