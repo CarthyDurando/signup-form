@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { containsLowerAndUpperCase, passwordNotContainName } from './custom-validator';
+import { AuthServiceService } from '../core/services/authService/auth-service.service';
+import { Album } from '../core/models/album.model';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule , HttpClientModule],
+  providers: [AuthServiceService],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
@@ -21,9 +24,13 @@ export class SignupComponent implements OnInit{
   firstName : string = '' ;
   lastName : string = '';
 
-  constructor(private fb: FormBuilder, private http: HttpClient) { }
+  constructor(private fb: FormBuilder, private authService : AuthServiceService ) { }
 
   ngOnInit(): void {
+      this.setup();
+  }
+
+  setup() {
     this.signupForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
@@ -39,21 +46,20 @@ export class SignupComponent implements OnInit{
   onSubmit(): void {
     if (this.signupForm.valid) {
       // Make the first request to get the thumbnail url
-      this.http.get(`https://jsonplaceholder.typicode.com/photos/${this.signupForm.value.lastName.length}`).subscribe((response: any) => {
-        this.thumbnailUrl = response.thumbnailUrl;
-        // Make the second request to create the user
-          this.http.post('https://jsonplaceholder.typicode.com/users', {
-            firstName: this.signupForm.value.firstName,
-            lastName: this.signupForm.value.lastName,
-            email: this.signupForm.value.email,
-            thumbnailUrl: this.thumbnailUrl
-          }).subscribe((response: any) => {
-            console.log('response ==== ' , response);
-          });
+      this.authService.runFirstRequest(this.signupForm.value.lastName.length ?? 0).subscribe((response : Album) => {
+        this.authService.runSecondRequest({
+          firstName: this.signupForm.value.firstName,
+          lastName: this.signupForm.value.lastName,
+          email: this.signupForm.value.email,
+          thumbnailUrl: this.thumbnailUrl
+        }).subscribe((response: any) => {
+          console.log('response ==== ' , response);
         });
+      });
     }
-
   }
+
+
 
   togglePasswordVisibility(): void {
     this.showPassword = !this.showPassword;
