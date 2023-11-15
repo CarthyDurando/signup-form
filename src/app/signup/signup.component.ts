@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { containsLowerAndUpperCase, passwordNotContainName } from './custom-validator';
-import { AuthServiceService } from '../core/services/authService/auth-service.service';
+import { AuthService } from '../core/services/authService/auth.service';
 import { Album } from '../core/models/album.model';
 
 @Component({
   selector: 'app-signup',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule , HttpClientModule],
-  providers: [AuthServiceService],
+  providers: [AuthService],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.scss'
 })
@@ -22,7 +22,7 @@ export class SignupComponent implements OnInit{
   showPassword: boolean = false;
   showPasswordConfirm: boolean = false;
 
-  constructor(private fb: FormBuilder, private authService : AuthServiceService ) { }
+  constructor(private fb: FormBuilder, private authService : AuthService ) { }
 
   ngOnInit(): void {
       this.setup();
@@ -47,7 +47,7 @@ export class SignupComponent implements OnInit{
     }
   }
   
-  private runFirstRequest(): void {
+  runFirstRequest(): void {
     this.authService.runFirstRequest(this.signupForm.value.lastName.length ?? 0).subscribe((firstRequestResponse: Album) => {
       if (firstRequestResponse) {
         this.thumbnailUrl = firstRequestResponse.thumbnailUrl;
@@ -56,7 +56,7 @@ export class SignupComponent implements OnInit{
     });
   }
   
-  private runSecondRequest(): void {
+  runSecondRequest(): void {
     const userData = {
       firstName: this.signupForm.value.firstName,
       lastName: this.signupForm.value.lastName,

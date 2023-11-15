@@ -1,23 +1,156 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { AuthService } from '../core/services/authService/auth.service';
 import { SignupComponent } from './signup.component';
+import { HttpClientModule } from '@angular/common/http';
+import { of } from 'rxjs';
 
 describe('SignupComponent', () => {
   let component: SignupComponent;
   let fixture: ComponentFixture<SignupComponent>;
+  let authService: AuthService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SignupComponent]
-    })
-    .compileComponents();
-    
+      imports: [
+        ReactiveFormsModule,
+        HttpClientTestingModule,
+        HttpClientModule,
+        RouterModule.forRoot([
+          { path: 'signup', component: SignupComponent },
+        ]),
+        SignupComponent
+      ],
+      providers: [AuthService],
+    }).compileComponents();
+  });
+
+  beforeEach(() => {
     fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
+    authService = TestBed.inject(AuthService);
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should initialize the signup form', () => {
+    expect(component.signupForm).toBeTruthy();
+    expect(component.signupForm.controls['firstName']).toBeTruthy();
+    expect(component.signupForm.controls['lastName']).toBeTruthy();
+    expect(component.signupForm.controls['email']).toBeTruthy();
+    expect(component.signupForm.controls['password']).toBeTruthy();
+    expect(component.signupForm.controls['passwordConfirm']).toBeTruthy();
+  });
+
+  it('should update the fullname property when firstName and lastName values change', () => {
+    component.signupForm.controls['firstName'].setValue('John');
+    component.signupForm.controls['lastName'].setValue('Doe');
+    fixture.detectChanges();
+    expect(component.fullname).toEqual('John Doe');
+  });
+
+  it('should toggle password visibility', () => {
+    component.showPassword = false;
+    component.togglePasswordVisibility();
+    expect(component.showPassword).toBeTruthy();
+  });
+
+  it('should toggle passwordConfirm visibility', () => {
+    component.showPasswordConfirm = false;
+    component.togglePasswordConfirmVisibility();
+    expect(component.showPasswordConfirm).toBeTruthy();
+  });
+
+  it('should check if passwords match', () => {
+    component.signupForm.controls['password'].setValue('password123');
+    component.signupForm.controls['passwordConfirm'].setValue('password123');
+    fixture.detectChanges();
+    expect(component.passwordMatch()).toEqual('');
+  });
+
+  it('should check if passwords does not match', () => {
+    component.signupForm.controls['password'].setValue('password123');
+    component.signupForm.controls['passwordConfirm'].setValue('password1234');
+    fixture.detectChanges();
+    expect(component.passwordMatch()).toEqual('Password does not match');
+  });
+
+
+  it('should check if password contains lastname or firstname', () => {
+    component.signupForm.controls['lastName'].setValue('john');
+    component.signupForm.controls['firstName'].setValue('doe');
+    component.signupForm.controls['password'].setValue('johndoe123');
+    component.signupForm.controls['password'].markAsTouched();
+    fixture.detectChanges();
+    const passwordErrors = component.getPasswordErrors();
+    expect(passwordErrors).toContain('Password should not contains lastname or firstname');
+  });
+
+  it('should check if password contains lowercase and uppercase characters', () => {
+    component.signupForm.controls['password'].setValue('password123');
+    component.signupForm.controls['password'].markAsTouched();
+    fixture.detectChanges();
+    const passwordErrors = component.getPasswordErrors();
+    expect(passwordErrors).toContain('Password should contain lowercase and uppercase characters');
+  });
+
+  it('should check if password is not less than 8 characters', () => {
+    component.signupForm.controls['password'].setValue('pass123');
+    component.signupForm.controls['password'].markAsTouched();
+    fixture.detectChanges();
+    const passwordErrors = component.getPasswordErrors();
+    expect(passwordErrors).toContain('Password should not be less than 8 characters');
+  });
+
+  it('should set thumbnailUrl from firstRequestResponse and call runSecondRequest if firstRequestResponse is valid', async() => {
+    const thumbnailURL = 'https://example.com/image.jpg';
+    const spy = spyOn(component, 'runSecondRequest');
+    spyOn(authService, 'runFirstRequest').and.returnValue(of({
+      albumId: 1,
+      id: 2,
+      thumbnailUrl: thumbnailURL,
+      title: 'test',
+      url: 'test.com'
+    }));
+    spyOn(authService, 'runSecondRequest').and.returnValue(of());
+    component.runFirstRequest();
+    // Asynchronous behavior simulation
+    setTimeout(() => {
+      expect(component.thumbnailUrl).toEqual(thumbnailURL);
+      expect(spy).toHaveBeenCalled();
+    },3000)
+  });
+
+  it('should not set thumbnailUrl or call runSecondRequest if firstRequestResponse is invalid', async() => {
+    const thumbnailURL = 'https://example.com/image.jpg';
+    const spy = spyOn(component, 'runSecondRequest');
+    spyOn(authService, 'runFirstRequest').and.returnValue(of(undefined));
+    component.runFirstRequest();
+    // Asynchronous behavior simulation
+    setTimeout(() => {
+      expect(component.thumbnailUrl).not.toBeDefined();
+      expect(spy).not.toHaveBeenCalled();
+    },500)
+  });
+
+  it('should call authService.runSecondRequest with userData', () => {
+    const spy = spyOn(authService, 'runSecondRequest');
+    const userData = {
+      firstName: 'John',
+      lastName: 'Doe',
+      email: 'johndoe@example.com',
+      thumbnailUrl: 'https://example.com/thumbnail.jpg',
+    };
+    component.runSecondRequest();
+    // Asynchronous behavior simulation
+    setTimeout(() => {
+      expect(spy).toHaveBeenCalledWith(userData);
+    },500)
+  });
+
 });
