@@ -16,7 +16,7 @@ export function passwordNotContainName(): ValidatorFn {
         const firstName = control?.root?.get('firstName')?.value;
         const lastName = control?.root?.get('lastName')?.value;
         const password = control.value;
-        if (password.toLowerCase().includes(firstName) || password.toLowerCase().includes(lastName)) {
+        if (password && (password.toLowerCase().includes(firstName) || password.toLowerCase().includes(lastName))) {
             return { 'passwordNotContainName': true };
         }
         return null;
