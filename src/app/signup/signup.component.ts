@@ -106,9 +106,6 @@ export class SignupComponent implements OnInit {
             case 'containsLowerAndUpperCase':
               errorList.push(`Password should contain lowercase and uppercase characters`)
               break;
-            default:
-              errorList.push('');
-              break;
           }
         });
       }
