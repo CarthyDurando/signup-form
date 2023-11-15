@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { containsLowerAndUpperCase, getPasswordValidators, passwordNotContainName } from './custom-validator';
+import { getPasswordValidators } from './custom-validator';
 import { AuthService } from '../core/services/authService/auth.service';
 import { Album } from '../core/models/album.model';
 import { User } from '../core/models/user.interface';
