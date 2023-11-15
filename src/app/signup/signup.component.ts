@@ -29,7 +29,7 @@ export class SignupComponent implements OnInit {
     this.setup();
   }
 
-  setup() {
+  setup() : void {
     this.signupForm = this.fb.group({
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
