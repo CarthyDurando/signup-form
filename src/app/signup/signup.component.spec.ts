@@ -38,6 +38,12 @@ describe('SignupComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should call setup on ngOnInit', () => {
+    const spySetup = spyOn(component, 'setup');
+    component.ngOnInit();
+    expect(spySetup).toHaveBeenCalled();
+  });
+
   it('should initialize the signup form', () => {
     expect(component.signupForm).toBeTruthy();
     expect(component.signupForm.controls['firstName']).toBeTruthy();
@@ -50,7 +56,6 @@ describe('SignupComponent', () => {
   it('should update the fullname property when firstName and lastName values change', () => {
     component.signupForm.controls['firstName'].setValue('John');
     component.signupForm.controls['lastName'].setValue('Doe');
-    fixture.detectChanges();
     expect(component.fullname).toEqual('John Doe');
   });
 
@@ -69,14 +74,12 @@ describe('SignupComponent', () => {
   it('should check if passwords match', () => {
     component.signupForm.controls['password'].setValue('password123');
     component.signupForm.controls['passwordConfirm'].setValue('password123');
-    fixture.detectChanges();
     expect(component.passwordMatch()).toEqual('');
   });
 
   it('should check if passwords does not match', () => {
     component.signupForm.controls['password'].setValue('password123');
     component.signupForm.controls['passwordConfirm'].setValue('password1234');
-    fixture.detectChanges();
     expect(component.passwordMatch()).toEqual('Password does not match');
   });
 
@@ -86,7 +89,6 @@ describe('SignupComponent', () => {
     component.signupForm.controls['firstName'].setValue('doe');
     component.signupForm.controls['password'].setValue('johndoe123');
     component.signupForm.controls['password'].markAsTouched();
-    fixture.detectChanges();
     const passwordErrors = component.getPasswordErrors();
     expect(passwordErrors).toContain('Password should not contains lastname or firstname');
   });
@@ -94,7 +96,6 @@ describe('SignupComponent', () => {
   it('should check if password contains lowercase and uppercase characters', () => {
     component.signupForm.controls['password'].setValue('password123');
     component.signupForm.controls['password'].markAsTouched();
-    fixture.detectChanges();
     const passwordErrors = component.getPasswordErrors();
     expect(passwordErrors).toContain('Password should contain lowercase and uppercase characters');
   });
@@ -102,7 +103,6 @@ describe('SignupComponent', () => {
   it('should check if password is not less than 8 characters', () => {
     component.signupForm.controls['password'].setValue('pass123');
     component.signupForm.controls['password'].markAsTouched();
-    fixture.detectChanges();
     const passwordErrors = component.getPasswordErrors();
     expect(passwordErrors).toContain('Password should not be less than 8 characters');
   });
