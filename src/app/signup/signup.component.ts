@@ -90,7 +90,29 @@ export class SignupComponent implements OnInit {
     return this.signupForm.get(fieldName)?.touched && this.signupForm.get(fieldName)?.invalid
   }
 
-  getPasswordErrors(): string[] {
+  getEmailValidationErrors(): string[] {
+    const errorList: string[] = [];
+    const emailControl = this.signupForm.controls['email'];
+    if (emailControl && emailControl.touched) {
+      const errors = emailControl.errors ?? {};
+      const errorsKeys = Object.keys(errors);
+      if (errorsKeys) {
+        errorsKeys.forEach(error => {
+          switch (error) {
+            case 'required':
+              errorList.push('Email is required')
+              break;
+            case 'email':
+              errorList.push('Email is not valid')
+              break;
+          }
+        });
+      }
+    }
+    return errorList;
+  }
+
+  getPasswordValidationErrors(): string[] {
     const errorList: string[] = [];
     const passwordControl = this.signupForm.controls['password'];
     if (passwordControl && passwordControl.touched) {

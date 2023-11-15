@@ -83,27 +83,31 @@ describe('SignupComponent', () => {
     expect(component.passwordMatch()).toEqual('Password does not match');
   });
 
+  it('should return an empty array when the password is not touched', () => {
+    expect(component.getPasswordValidationErrors()).toEqual([]);
+  });
+
 
   it('should check if password contains lastname or firstname', () => {
     component.signupForm.controls['lastName'].setValue('john');
     component.signupForm.controls['firstName'].setValue('doe');
     component.signupForm.controls['password'].setValue('johndoe123');
     component.signupForm.controls['password'].markAsTouched();
-    const passwordErrors = component.getPasswordErrors();
+    const passwordErrors = component.getPasswordValidationErrors();
     expect(passwordErrors).toContain('Password should not contains lastname or firstname');
   });
 
   it('should check if password contains lowercase and uppercase characters', () => {
     component.signupForm.controls['password'].setValue('password123');
     component.signupForm.controls['password'].markAsTouched();
-    const passwordErrors = component.getPasswordErrors();
+    const passwordErrors = component.getPasswordValidationErrors();
     expect(passwordErrors).toContain('Password should contain lowercase and uppercase characters');
   });
 
   it('should check if password is not less than 8 characters', () => {
     component.signupForm.controls['password'].setValue('pass123');
     component.signupForm.controls['password'].markAsTouched();
-    const passwordErrors = component.getPasswordErrors();
+    const passwordErrors = component.getPasswordValidationErrors();
     expect(passwordErrors).toContain('Password should not be less than 8 characters');
   });
 
@@ -153,4 +157,20 @@ describe('SignupComponent', () => {
     },500)
   });
 
+  it('should return an empty array when the email is not touched', () => {
+    expect(component.getEmailValidationErrors()).toEqual([]);
+  });
+
+  it('should return the required error when the email is touched and is empty', () => {
+    const emailControl = component.signupForm.controls['email'];
+    emailControl.markAsTouched();
+    expect(component.getEmailValidationErrors()).toEqual(['Email is required']);
+  });
+
+  it('should return the email error when the email is touched and is not valid', () => {
+    const emailControl = component.signupForm.controls['email'];
+    emailControl.setValue('invalid-email');
+    emailControl.markAsTouched();
+    expect(component.getEmailValidationErrors()).toEqual(['Email is not valid']);
+  });
 });
