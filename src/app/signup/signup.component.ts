@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormGroup, FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
-import { containsLowerAndUpperCase, passwordNotContainName } from './custom-validator';
+import { containsLowerAndUpperCase, getPasswordValidators, passwordNotContainName } from './custom-validator';
 import { AuthService } from '../core/services/authService/auth.service';
 import { Album } from '../core/models/album.model';
 import { User } from '../core/models/user.interface';
@@ -34,8 +34,8 @@ export class SignupComponent implements OnInit {
       firstName: ['', [Validators.required]],
       lastName: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8), containsLowerAndUpperCase(), passwordNotContainName()]],
-      passwordConfirm: ['', [Validators.required, Validators.minLength(8), containsLowerAndUpperCase(), passwordNotContainName()]]
+      password: ['', getPasswordValidators()],
+      passwordConfirm: ['', getPasswordValidators()]
     });
     this.signupForm.valueChanges.subscribe(() => {
       this.fullname = `${this.signupForm.value.firstName} ${this.signupForm.value.lastName}`;
@@ -66,7 +66,12 @@ export class SignupComponent implements OnInit {
     };
     this.authService.runSecondRequest(userData).subscribe((secondRequestResponse: any) => {
       console.log('Second Request Response:', secondRequestResponse);
+      this.clearForm();
     });
+  }
+
+  clearForm() {
+    this.signupForm.reset();
   }
 
   togglePasswordVisibility(): void {

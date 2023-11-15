@@ -1,4 +1,4 @@
-import { ValidatorFn, AbstractControl } from "@angular/forms";
+import { ValidatorFn, AbstractControl, Validators } from "@angular/forms";
 
 export function containsLowerAndUpperCase(): ValidatorFn {
     const pattern = /^(?=.*[a-z])(?=.*[A-Z]).*$/;
@@ -21,4 +21,8 @@ export function passwordNotContainName(): ValidatorFn {
         }
         return null;
     };
+}
+
+export function getPasswordValidators() : Validators[] {
+    return [Validators.required, Validators.minLength(8), containsLowerAndUpperCase(), passwordNotContainName()];
 }
